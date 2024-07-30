@@ -24,7 +24,9 @@ app.use('/firm', firmrouters);
 app.use('/product', productrouters);
 app.use('/uploads',express.static('uploads'))
 
-
+app.get('/',(req,res)=>{
+    res.send('<h1>Welcom to Foodie Application</h1>')
+})
 
 app.listen(port, () => {
     console.log(`server is running at port : ${port}`)
