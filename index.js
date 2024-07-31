@@ -9,6 +9,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const path = require('path')
 const app = express()
+app.use(cors('*'))
 
 const port = process.env.port || 5000;
 
@@ -17,7 +18,6 @@ mongoose.connect(process.env.mongodburl)
     .catch(x => console.log(x))
 
 app.use(bodyParser.json())
-app.use(cors('*'))
 
 app.use('/vendor', vendorrouters);
 app.use('/firm', firmrouters);
