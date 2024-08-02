@@ -4,13 +4,13 @@ const Product = require('../model/productsmodel')
 const path=require('path')
 
 const storage = multer.diskStorage({
-    destination: function (req, res, cb) {
-        cb(null, 'uploads/')
+    destination: function(req, file, cb) {
+        cb(null, 'uploads/'); // Destination folder where the uploaded images will be stored
     },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname))
+    filename: function(req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname)); // Generating a unique filename
     }
-})
+});
 
 const upload = multer({ storage: storage });
 
@@ -51,14 +51,16 @@ const getProductByFirm = async (req, res) => {
 
     try {
         const firmId = req.params.firmId
-        const firm = await Firm.findOne(firmId)
+        console.log(firmId,'firmId')
+        const firm = await Firm.findById(firmId).populate('products');
 
         if (!firm) {
             return res.status(404).json({ errorMessage: "firm not found" })
         }
 
         const resturantName = firm.firmName
-        const products = await Product.find({ firmId })
+        // const products = await Product.find({firmId})
+        const products = firm.products;
 
         res.status(200).json({
             resturantName,

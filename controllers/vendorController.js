@@ -42,8 +42,8 @@ const vendorLogin = async (req, res) => {
             return res.status(400).json({ error: "Invalid username or password" })
         }
         const token = jwt.sign({ vendorId: vendor._id }, secretkey, { expiresIn: "1h" })
-
-        res.status(200).json({ success: "Loign successfull", token })
+        const vendorId = vendor._id
+        res.status(200).json({ success: "Loign successfull", token, vendorId })
         console.log(email, 'successfully login')
         console.log(token, 'this is token')
     }
@@ -70,14 +70,16 @@ const getallvendors = async (req, res) => {
 }
 
 const getsinglevendors = async (req, res) => {
-    const id = req.params._id
+    const vendorId = req.params._id
 
     try {
-        const vendor = await Vendor.findById(id).populate('firm')
+        const vendor = await Vendor.findById(vendorId).populate('firm')
         if (!vendor) {
             return res.status(400).json({ errorMessage: "vendor not found" })
         }
-        res.json({ vendor })
+
+        const vendorFirmId = vendor.firm[0]._id
+        res.json({ vendorId, vendorFirmId,vendor })
     }
     catch (error) {
         res.status(500).json({

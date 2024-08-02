@@ -17,8 +17,8 @@ const productSchema=new Schema({
             }
         ]
     },
-    Image: {
-        type : String
+    image: {
+        type: String
     },
     bestSeller : {
         type: Boolean

@@ -30,7 +30,7 @@ const firmScheme = new Schema({
     offer: {
         type: String
     },
-    Image: {
+    image: {
         type: String
     },
     vendor: [

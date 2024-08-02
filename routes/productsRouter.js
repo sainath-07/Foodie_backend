@@ -5,7 +5,7 @@ const { addProduct, getProductByFirm, deleteProductById } = require('../controll
 const router = Router()
 
 router.post('/add-product/:firmid', addProduct)
-    .get('/:firmid', getProductByFirm)
+    .get('/:firmId', getProductByFirm)
     .get('/uploads/:imageName', (req, res) => {
         const imageName = req.params.imageName;
         res.headersSent('Content-Type', 'image/jpeg');
