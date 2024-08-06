@@ -9,9 +9,9 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const path = require('path')
 const app = express()
-app.use(cors('*'))
+app.use(cors())
 
-const port = process.env.port || 5000;
+const port = process.env.port || 8000;
 
 mongoose.connect(process.env.mongodburl)
     .then(x => console.log('database connected'))

@@ -1,13 +1,13 @@
 const multer = require('multer')
 const Firm = require('../model/firmmodel')
 const Product = require('../model/productsmodel')
-const path=require('path')
+const path = require('path')
 
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
+    destination: function (req, file, cb) {
         cb(null, 'uploads/'); // Destination folder where the uploaded images will be stored
     },
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, Date.now() + path.extname(file.originalname)); // Generating a unique filename
     }
 });
@@ -51,7 +51,7 @@ const getProductByFirm = async (req, res) => {
 
     try {
         const firmId = req.params.firmId
-        console.log(firmId,'firmId')
+        console.log(firmId, 'firmId')
         const firm = await Firm.findById(firmId).populate('products');
 
         if (!firm) {
@@ -79,13 +79,18 @@ const getProductByFirm = async (req, res) => {
 
 const deleteProductById = async (req, res) => {
     try {
-        const productId = req.params.productId;
-        const deleteProductById = await Product.findByIdAndDelete(productId)
+        const { productId } = req.params;
+        // Delete the product by ID
+        const deletedProduct = await Product.findByIdAndDelete({ _id: productId });
 
-        if (!deleteProductById) {
-            return res.status(400).json({ error: "Product not found" })
-                }
+        if (!deletedProduct) {
+            return res.status(404).json({ error: "Product not found" });
+        }
 
+        res.status(200).json({
+            message: 'Product deleted successfully',
+            deletedProduct
+        });
     } catch (error) {
         console.log(error)
         res.status(500).json({ error: "internal server error" })

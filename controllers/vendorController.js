@@ -21,9 +21,10 @@ const vendorRegister = async (req, res) => {
             email,
             password: hashedpassword
         });
-        await newvendor.save()
+        const savenewvendor = await newvendor.save()
         res.status(201).json({
-            message: "vendor added successfully"
+            message: "vendor added successfully",
+            savenewvendor
         })
         console.log('registred')
     }
@@ -43,7 +44,7 @@ const vendorLogin = async (req, res) => {
         }
         const token = jwt.sign({ vendorId: vendor._id }, secretkey, { expiresIn: "1h" })
         const vendorId = vendor._id
-        res.status(200).json({ success: "Loign successfull", token, vendorId })
+        res.status(200).json({ success: "Loign successfull", token, vendorId, vendor })
         console.log(email, 'successfully login')
         console.log(token, 'this is token')
     }
@@ -79,7 +80,7 @@ const getsinglevendors = async (req, res) => {
         }
 
         const vendorFirmId = vendor.firm[0]._id
-        res.json({ vendorId, vendorFirmId,vendor })
+        res.json({ vendorId, vendorFirmId, vendor })
     }
     catch (error) {
         res.status(500).json({
