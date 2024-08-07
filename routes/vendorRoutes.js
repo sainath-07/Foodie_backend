@@ -6,6 +6,6 @@ const { vendorRegister, vendorLogin, getallvendors,getsinglevendors } = require(
 router.post('/register', vendorRegister)
     .post('/login', vendorLogin)
     .get('/all-vendors', getallvendors)
-    .get('/singleVendorbyid/:_id', getsinglevendors)
+    .get('/singleVendorbyid/:vendorId', getsinglevendors)
 
 module.exports = router

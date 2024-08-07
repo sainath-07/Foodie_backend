@@ -1,16 +1,16 @@
-const {Schema, model, default : mongoose}=require('mongoose')
+const { Schema, model, default: mongoose } = require('mongoose')
 
-const productSchema=new Schema({
+const productSchema = new Schema({
     productName: {
-        type : String,
-        required : true
+        type: String,
+        required: true
     },
-    price : {
-        type : String,
-        required : true
+    price: {
+        type: String,
+        required: true
     },
-    category : {
-        type : [
+    category: {
+        type: [
             {
                 type: String,
                 enum: ['veg', 'Non-veg']
@@ -20,17 +20,17 @@ const productSchema=new Schema({
     image: {
         type: String
     },
-    bestSeller : {
+    bestSeller: {
         type: Boolean
     },
-    description:{
-        type:String
+    description: {
+        type: String
     },
-    firm : [{
+    firm: {
         type: mongoose.Schema.Types.ObjectId,
-        ref : 'Firm'
-    }]
+        ref: 'Firm'
+    }
 });
 
-const Product=model('Product',productSchema)
-module.exports=Product
+const Product = model('Product', productSchema)
+module.exports = Product

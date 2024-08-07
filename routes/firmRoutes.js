@@ -11,7 +11,6 @@ router.get('/uploads/:imageName',(req,res)=>{
     res.headersSent('Content-Type','image/jpeg');
     res.sendFile(path.join(__dirname,'..','uploads',imageName))
 });
-
 router.delete('/:firmId',deleteFirmById)
 
 module.exports=router

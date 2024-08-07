@@ -1,14 +1,14 @@
 const Firm = require('../model/firmmodel')
 const Vendor = require('../model/vendormodel')
 const multer = require('multer')
-const path=require('path')
+const path = require('path')
 
 
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
+    destination: function (req, file, cb) {
         cb(null, 'uploads/'); // Destination folder where the uploaded images will be stored
     },
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, Date.now() + path.extname(file.originalname)); // Generating a unique filename
     }
 });
@@ -18,7 +18,7 @@ const upload = multer({ storage: storage });
 const addFirm = async (req, res) => {
     try {
         const { firmName, area, category, region, offer } = req.body
-        
+
         const image = req.file ? req.file.filename : undefined;
 
         const vendor = await Vendor.findById(req.vendorId)
@@ -27,20 +27,20 @@ const addFirm = async (req, res) => {
         if (!vendor) {
             res.status(404).json({ message: "Vendor not found" })
         }
-        if(vendor.firm.length>0){
-            console.log(vendor.firm.length,'vendor.firm.length')
-            return res.status(404).json({message : "vendor can have only one firm"})
+
+        if (vendor.firm) {
+            return res.status(400).json({ message: "vendor can have only one firm" });
         }
+
         const firm = new Firm({
             firmName, area, category, region, offer, image, vendor: vendor._id
         })
 
         const savedfrim = await firm.save()
-        const firmId=savedfrim._id
-        vendor.firm.push(savedfrim)
+        vendor.firm = savedfrim._id
         await vendor.save()
 
-         res.status(200).json({ message: "Firm added successfully",firmId ,firm})
+        res.status(200).json({ message: "Firm added successfully", firm })
     }
     catch (error) {
         console.log(error)
@@ -63,8 +63,11 @@ const deleteFirmById = async (req, res) => {
 }
 
 
+
+
 //if we have image export in this way as below..
-module.exports = { 
-    addFirm: [upload.single('image'), addFirm] ,
-    deleteFirmById
+module.exports = {
+    addFirm: [upload.single('image'), addFirm],
+    deleteFirmById,
+    
 }

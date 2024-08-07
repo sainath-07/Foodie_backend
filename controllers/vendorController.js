@@ -13,7 +13,7 @@ const vendorRegister = async (req, res) => {
         const vendor = await Vendor.findOne({ email })
 
         if (vendor) {
-            return res.status(400).json('Email already exists')
+            return res.status(400).json({message :'Vendor has already registered , Please login'})
         }
         const hashedpassword = await bcrypt.hash(password, 10)
         const newvendor = new Vendor({
@@ -39,18 +39,28 @@ const vendorLogin = async (req, res) => {
     const { email, password } = req.body
     try {
         const vendor = await Vendor.findOne({ email })
+
         if (!vendor || !(await bcrypt.compare(password, vendor.password))) {
-            return res.status(400).json({ error: "Invalid username or password" })
+            return res.status(400).json({ error: "Entered Email or password doesn't exists in database" })
         }
         const token = jwt.sign({ vendorId: vendor._id }, secretkey, { expiresIn: "1h" })
+
+        if (!token) {
+            return res.status(400).json({ error: "Token not found" })
+        }
+
+
         const vendorId = vendor._id
-        res.status(200).json({ success: "Loign successfull", token, vendorId, vendor })
-        console.log(email, 'successfully login')
-        console.log(token, 'this is token')
+        res.status(200).json({
+            success: "Loign successfull",
+            vendor,
+            token,
+            vendorId,
+        })
     }
     catch (e) {
         console.log(e)
-        res.status(500).json({ errorMessage: "Internal server error" })
+        res.status(500).json({ errorMessage: "Internal server error login page" })
     }
 }
 
@@ -71,7 +81,8 @@ const getallvendors = async (req, res) => {
 }
 
 const getsinglevendors = async (req, res) => {
-    const vendorId = req.params._id
+    const { vendorId } = req.params
+    console.log(vendorId)
 
     try {
         const vendor = await Vendor.findById(vendorId).populate('firm')
@@ -79,7 +90,7 @@ const getsinglevendors = async (req, res) => {
             return res.status(400).json({ errorMessage: "vendor not found" })
         }
 
-        const vendorFirmId = vendor.firm[0]._id
+        const vendorFirmId = vendor.firm._id
         res.json({ vendorId, vendorFirmId, vendor })
     }
     catch (error) {
