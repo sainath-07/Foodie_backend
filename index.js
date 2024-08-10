@@ -3,6 +3,8 @@ const mongoose = require('mongoose')
 const vendorrouters = require('./routes/vendorRoutes')
 const firmrouters = require('./routes/firmRoutes')
 const productrouters = require('./routes/productsRouter')
+const userrouters=require('./routes/userRoutes')
+const cartpagerouters=require('./routes/cartpageRoutes')
 require('dotenv').config()
 // To convert the inputfields data into JSON format we can use the bodyparser
 const bodyParser = require('body-parser')
@@ -22,6 +24,8 @@ app.use(bodyParser.json())
 app.use('/vendor', vendorrouters);
 app.use('/firm', firmrouters);
 app.use('/product', productrouters);
+app.use('/users', userrouters);
+app.use('/cart', cartpagerouters);
 app.use('/uploads',express.static('uploads'))
 
 app.get('/',(req,res)=>{
