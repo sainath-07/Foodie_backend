@@ -1,10 +1,25 @@
+const multer = require('multer');
 const CartPage = require('../model/addtocartmodel')
 const Userdetail = require('../model/usermodels')
+const path = require('path')
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/'); // Destination folder where the uploaded images will be stored
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname)); // Generating a unique filename
+    }
+});
+
+const upload = multer({ storage: storage });
 
 const addUserProduct = async (req, res) => {
     try {
-        const { productName, price, image, count, totalPrice } = req.body
+        const { productName, price, count, image, totalPrice, productId } = req.body
 
+        // const image = req.file ? req.file.filename : undefined;
 
         const user = await Userdetail.findById(req.userId)
 
@@ -13,7 +28,7 @@ const addUserProduct = async (req, res) => {
         }
 
         const cartPageProducts = new CartPage({
-            productName, price, image, count, totalPrice, user: user._id
+            productName, price, image, count, totalPrice, productId, user: user._id
         })
 
         const savedcartPageProducts = await cartPageProducts.save()
@@ -73,9 +88,9 @@ const deleteUserProduct = async (req, res) => {
 
         })
 
-        if(!deleteProduct){
+        if (!deleteProduct) {
             return res.status(404).json({
-                message : 'product doesnot exist in database'
+                message: 'product doesnot exist in database'
             })
         }
 
@@ -90,9 +105,39 @@ const deleteUserProduct = async (req, res) => {
     }
 }
 
+const updateUserProductQuantity = async (req, res) => {
+    const { productId } = req.params
+    const { count, totalPrice } = req.body
 
+
+    try {
+        const replaceQuantity = await CartPage.findOneAndUpdate(
+            {
+                _id: productId,
+                user: req.userId
+            },
+            {
+                count, totalPrice,
+                user: req.userId
+            },
+
+            { new: true }
+        )
+
+        res.status(200).json({
+            message: 'Product updated sucsessfull',
+            replaceQuantity
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ errorMessage: "internalServer error" })
+    }
+
+}
 
 
 module.exports = {
-    addUserProduct, getAllUserProducts, deleteUserProduct
+    addUserProduct: [upload.single('image'), addUserProduct],
+
+    getAllUserProducts, deleteUserProduct, updateUserProductQuantity
 }

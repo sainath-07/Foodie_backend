@@ -21,6 +21,10 @@ const addToCart = new mongoose.Schema({
         type: String,
         required: true
     },
+    productId: {
+        type: String,
+        required: true
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Userdetail'
